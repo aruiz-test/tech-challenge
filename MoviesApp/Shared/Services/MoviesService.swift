@@ -7,8 +7,6 @@
 
 import Foundation
 
-//extension String: Error {}
-
 class MoviesService {
     
     let httpService: HttpService!

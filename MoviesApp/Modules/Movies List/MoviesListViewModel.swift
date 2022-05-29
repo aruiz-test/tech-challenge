@@ -16,7 +16,7 @@ class MoviesListViewModel: NSObject {
     var dataChanged = { () -> () in }
     var dataError   = { (error: Error) -> () in }
     
-    private var fetchingData = true
+    private var fetchingData = false
 
     private var movies: [Movie] = [] {
         didSet {

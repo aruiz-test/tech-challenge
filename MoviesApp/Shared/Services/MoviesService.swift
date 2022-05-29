@@ -7,11 +7,18 @@
 
 import Foundation
 
-internal typealias APIResult = ((_ result: Result<Data, Error>) -> Void)
-extension String: Error {}
+//extension String: Error {}
 
 class MoviesService {
-        
+    
+    let httpService: HttpService!
+    
+    // MARK: Using SlowConnectionHttpService here just for the sake of showing how the app would work on slow mobile connections
+    init(httpService: HttpService = SlowConnectionHttpService()) {
+        self.httpService = httpService
+    }
+    
+    
     // This enum contains all needed API methods and provide functionality
     enum API {
         private var baseURL: String { "https://api.themoviedb.org/3/" }
@@ -37,22 +44,22 @@ class MoviesService {
             var urlComponents = URLComponents(string: baseURL + endpoint)!
             queryItems.append(URLQueryItem(name: "api_key", value: apiKey))
             urlComponents.queryItems = queryItems
-            
             return urlComponents.url!
         }
         
-        // Execute the corresponding request and return response data
-        internal func executeRequest() async throws -> Data {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            return data
-        }
+    }
+    
+    // Execute the corresponding request and return response data
+    private func executeRequest(apiMethod: API) async throws -> Data {
+        let data = try await httpService.executeRequest(url: apiMethod.url)
+        return data
     }
     
         
     // Convenience funcs
     func searchMovies(query: String) async throws -> [Movie] {
         // Perform the request
-        let data = try await API.searchMovie(query).executeRequest()
+        let data = try await executeRequest(apiMethod: .searchMovie(query))
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-mm-dd"

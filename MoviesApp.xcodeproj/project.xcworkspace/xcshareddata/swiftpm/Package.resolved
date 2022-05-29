@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "async-plus",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/async-plus/async-plus.git",
+      "state" : {
+        "revision" : "51a0fe9c617e5b2dc36fa1aef8c1cfa7a85b1e16",
+        "version" : "1.0.2"
+      }
+    }
+  ],
+  "version" : 2
+}

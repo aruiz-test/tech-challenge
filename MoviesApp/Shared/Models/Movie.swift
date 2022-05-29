@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MoviesResponse: Decodable {
+struct MoviesResponse: Codable {
     let page: Int
     let results: [Movie]
     let totalPages: Int
@@ -22,7 +22,7 @@ struct MoviesResponse: Decodable {
     }
  */
 
-struct Movie : Decodable {
+struct Movie : Codable {
     let id: Int
     let title: String
     let posterPath: String

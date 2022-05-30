@@ -12,13 +12,13 @@ import XCTest
 class MoviesListViewModelTests: XCTestCase {
 
     var moviesListViewModel: MoviesListViewModel!
-    
+
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        
+
         // Create a moviesService and inject the MockHttpService to it
         let moviesService = MoviesService(httpService: MockHttpService())
-        
+
         // Create a MoviesListViewModel and inject the moviesService to it
         moviesListViewModel = MoviesListViewModel(moviesService: moviesService)
     }
@@ -37,10 +37,12 @@ class MoviesListViewModelTests: XCTestCase {
         let dataExpectation = XCTestExpectation(description: "Test dataChanged callback")
         
         // Presentation funcs and computed properties must be tested after MoviesService is done fetching data, which will invoke dataChanged callback
-        moviesListViewModel.dataChanged = { _ in
-            XCTAssertGreaterThan(self.moviesListViewModel.numberOfMovies, 0)
+        moviesListViewModel.dataChanged = { isNewSearch in
+            if isNewSearch { return }
             XCTAssertNotNil(self.moviesListViewModel.movieTitle(for: index))
             XCTAssertNotNil(self.moviesListViewModel.movieYearFormatted(for: index))
+            XCTAssertGreaterThan(self.moviesListViewModel.numberOfMovies, 0)
+
             dataExpectation.fulfill()
         }
         
@@ -60,7 +62,8 @@ class MoviesListViewModelTests: XCTestCase {
         let errorExpectation = XCTestExpectation(description: "Test dataError callback. Shouldn't be fulfilled")
         errorExpectation.isInverted = true // Inverted because we expect it NOT to be fulfilled
 
-        moviesListViewModel.dataChanged = { _ in
+        moviesListViewModel.dataChanged = { isNewSearch in
+            if isNewSearch { return }
             dataExpectation.fulfill()
         }
         moviesListViewModel.dataError = { _ in

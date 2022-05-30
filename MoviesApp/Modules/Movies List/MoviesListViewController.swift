@@ -18,28 +18,41 @@ class MoviesListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Style settings
+        self.navigationController?.navigationBar.prefersLargeTitles = true
         self.view.backgroundColor = .systemBackground
         self.title = "Search movies"
         
+        // Add and setup a search controller
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.delegate = self
+        searchController.hidesNavigationBarDuringPresentation = false
+        self.navigationItem.searchController = searchController
+        
+        // Setup the table view
         tableView = UITableView(frame: view.frame, style: .grouped)
         tableView.register(MoviesListTableViewCell.self, forCellReuseIdentifier: reuseIdentifierMovie)
         
         // Bind viewModel callbacks
         viewModel.dataChanged = configureView
         viewModel.dataError   = showError(_:)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
-        // Start fetching data to fill the table view
-        viewModel.searchMovies(query: "Star Wars") // TODO: Pass a query from search bar
+        // Focus the search bar when the view appears
+        self.navigationItem.searchController?.searchBar.becomeFirstResponder()
     }
     
     private func configureView() {
+        // Ensure UI updates always happen on the main thread
         DispatchQueue.main.async {
-            self.tableView.reloadData()
+            self.tableView.reloadSections(IndexSet(integer:0), with: .automatic)
         }
     }
     
     private func showError(_ error: Error) {
-        // TODO: Implement. Show alert with Retry button
         print(error)
     }
 }
@@ -55,7 +68,8 @@ extension MoviesListViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return max(1, viewModel.numberOfMovies) // At least one cell to show the loading message
+        // Return at least one row to show the loading message
+        return viewModel.isFetchingData ? 1 : viewModel.numberOfMovies
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -100,5 +114,16 @@ class MoviesListTableViewCell : UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+
+// MARK: - UISearchBarDelegate
+extension MoviesListViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let searchText = searchBar.text, searchText.isNotEmpty else { return }
+        viewModel.searchMovies(query: searchText)
+        configureView()
     }
 }

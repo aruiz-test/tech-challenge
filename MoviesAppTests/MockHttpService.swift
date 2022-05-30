@@ -44,17 +44,17 @@ class MockHttpService: HttpService {
         Movie(id: 1,
           title: "TEST MOVIE 1",
           posterPath: "",
-          releaseDate: Date(timeIntervalSince1970: 0)
+          releaseDate: "1990-10-27"
          ),
         Movie(id: 2,
           title: "TEST MOVIE 2",
           posterPath: "",
-          releaseDate: Date(timeIntervalSince1970: 1000000000)
+          releaseDate: "1998-4-11"
          ),
         Movie(id: 3,
           title: "TEST MOVIE 3",
           posterPath: "",
-          releaseDate: Date(timeIntervalSince1970: 1500000000)
+          releaseDate: "2017-1-1"
          )
     ]
 }

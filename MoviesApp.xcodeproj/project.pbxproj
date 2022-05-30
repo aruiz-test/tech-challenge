@@ -26,6 +26,8 @@
 		8E2450452843846D0058E1C6 /* MockHttpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2450442843846C0058E1C6 /* MockHttpService.swift */; };
 		8E2450462843846D0058E1C6 /* MockHttpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2450442843846C0058E1C6 /* MockHttpService.swift */; };
 		8E245048284388170058E1C6 /* MoviesListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E245047284388170058E1C6 /* MoviesListViewModelTests.swift */; };
+		8E24504A284441D80058E1C6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E245049284441D80058E1C6 /* Extensions.swift */; };
+		8E24504B284441D80058E1C6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E245049284441D80058E1C6 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +65,7 @@
 		8E245041284376BA0058E1C6 /* HttpService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpService.swift; sourceTree = "<group>"; };
 		8E2450442843846C0058E1C6 /* MockHttpService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHttpService.swift; sourceTree = "<group>"; };
 		8E245047284388170058E1C6 /* MoviesListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesListViewModelTests.swift; sourceTree = "<group>"; };
+		8E245049284441D80058E1C6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = MoviesApp/Shared/Extensions.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +193,7 @@
 			children = (
 				8E2450332842A4360058E1C6 /* MoviesService.swift */,
 				8E245041284376BA0058E1C6 /* HttpService.swift */,
+				8E245049284441D80058E1C6 /* Extensions.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -333,6 +337,7 @@
 				8E24503F284371F50058E1C6 /* MoviesListViewModel.swift in Sources */,
 				8E245000284293050058E1C6 /* MoviesListViewController.swift in Sources */,
 				8E244FFC284293050058E1C6 /* AppDelegate.swift in Sources */,
+				8E24504A284441D80058E1C6 /* Extensions.swift in Sources */,
 				8E2450382842AB790058E1C6 /* Movie.swift in Sources */,
 				8E2450342842A4360058E1C6 /* MoviesService.swift in Sources */,
 				8E245042284376BA0058E1C6 /* HttpService.swift in Sources */,
@@ -347,6 +352,7 @@
 				8E2450352842A4360058E1C6 /* MoviesService.swift in Sources */,
 				8E245013284293070058E1C6 /* MoviesServiceTests.swift in Sources */,
 				8E2450392842AB790058E1C6 /* Movie.swift in Sources */,
+				8E24504B284441D80058E1C6 /* Extensions.swift in Sources */,
 				8E245040284371F50058E1C6 /* MoviesListViewModel.swift in Sources */,
 				8E245048284388170058E1C6 /* MoviesListViewModelTests.swift in Sources */,
 				8E2450462843846D0058E1C6 /* MockHttpService.swift in Sources */,

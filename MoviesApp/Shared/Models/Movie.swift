@@ -23,10 +23,10 @@ struct MoviesResponse: Codable {
  */
 
 struct Movie : Codable {
-    let id: Int
-    let title: String
-    let posterPath: String
-    let releaseDate: Date
+    let id: Int?
+    let title: String?
+    let posterPath: String?
+    let releaseDate: String?
 }
 // Add more properties as needed
 

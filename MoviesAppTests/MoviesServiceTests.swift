@@ -29,18 +29,16 @@ class MoviesServiceTests: XCTestCase {
             movies in
             XCTAssertGreaterThan(movies.count, 0)
 
+            let movie = movies.first
             let movieMock = MockHttpService.testMovies.first!
             
-            let movie = movies.first
+            // Compare first movie from request result with mock
             XCTAssertNotNil(movie)
             XCTAssertEqual(movie?.id, movieMock.id)
             XCTAssertEqual(movie?.title, movieMock.title)
             XCTAssertEqual(movie?.posterPath, movieMock.posterPath)
             XCTAssertEqual(movie?.releaseDate, movieMock.releaseDate)
-
-        }.catch {
-            _ in
-        }
+        }.catch { _ in }
         
     }
 

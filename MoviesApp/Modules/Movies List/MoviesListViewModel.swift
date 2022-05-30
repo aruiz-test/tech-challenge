@@ -45,7 +45,6 @@ class MoviesListViewModel: NSObject {
             self.fetchingData = false
         }
     }
-
     
     
     // MARK: - Presentation
@@ -70,14 +69,18 @@ class MoviesListViewModel: NSObject {
     }
     
     func movieYearFormatted(for indexPath: IndexPath) -> String? {
-        guard movies.count > indexPath.row else {
+        
+        let formatter = DateFormatter(); formatter.dateFormat = "yyyy-mm-dd"
+
+        guard movies.count > indexPath.row,
+              let dateString = movies[indexPath.row].releaseDate,
+              dateString.isNotEmpty,
+              let date = formatter.date(from: dateString)
+        else {
             return nil
         }
-        let date = movies[indexPath.row].releaseDate
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy"
-
-        return date.formatted(date: .numeric, time: .omitted) // TODO: Return the year only
+        
+        return "\(date.get(.year))"
     }
 
 }

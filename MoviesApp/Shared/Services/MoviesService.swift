@@ -58,13 +58,9 @@ class MoviesService {
     func searchMovies(query: String) async throws -> [Movie] {
         // Perform the request
         let data = try await executeRequest(apiMethod: .searchMovie(query))
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-mm-dd"
-        
+
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        decoder.dateDecodingStrategy = .formatted(dateFormatter)
         
         // Decode the data as JSON and return the movies array
         let moviesResponse = try decoder.decode(MoviesResponse.self, from: data)

@@ -91,7 +91,7 @@ extension MoviesListViewController {
             cell.textLabel?.text = viewModel.movieTitle(for: indexPath)
             cell.detailTextLabel?.text = viewModel.movieYearFormatted(for: indexPath)
             cell.imageView?.image = UIImage(named: "movie_default_icon")
-            viewModel.downloadMoviePosterImageAsyncTo(for: indexPath) {
+            viewModel.downloadMoviePosterImage(for: indexPath) {
                 image in
                 // Update UI on main thread
                 DispatchQueue.main.async {
@@ -105,6 +105,8 @@ extension MoviesListViewController {
                 }
             }
         }
+        
+        // TODO: Handle no-results case
         
         return cell
     }

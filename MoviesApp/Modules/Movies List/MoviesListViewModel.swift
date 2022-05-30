@@ -86,7 +86,7 @@ class MoviesListViewModel: NSObject {
         return "\(date.get(.year))"
     }
     
-    func downloadMoviePosterImageAsyncTo(for indexPath: IndexPath, completion: @escaping (UIImage?) -> ()) {
+    func downloadMoviePosterImage(for indexPath: IndexPath, completion: @escaping (UIImage?) -> ()) {
         
         guard movies.count > indexPath.row,
               let posterPath = movies[indexPath.row].posterPath

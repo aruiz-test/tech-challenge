@@ -14,16 +14,20 @@ class MoviesListViewModel: NSObject {
     private let moviesService: MoviesService!
 
     // ViewControllers can bind to these closures get notified about data changes and errors
-    var dataChanged = { () -> () in }
+    var dataChanged = { (isNewSearch: Bool) -> () in }
     var dataError   = { (error: Error) -> () in }
     
     private var fetchingData = false
+    private var lastQuery    = ""
+    private var currentPage  = 1
+    private var totalPages   = 0
 
     private var movies: [Movie] = [] {
         didSet {
             // Call on main thread so that UI updates are safe
             DispatchQueue.main.async {
-                self.dataChanged()
+                // If fetchingData and movies is empty, it's a new search
+                self.dataChanged(self.fetchingData && self.movies.isEmpty)
             }
         }
     }
@@ -34,14 +38,17 @@ class MoviesListViewModel: NSObject {
     }
     
     private func fetchData(query: String) {
-        //if movies.isNotEmpty && fetchingData == false { return }
-        self.fetchingData = true
+        if fetchingData { return }
         
+        fetchingData = true
+        lastQuery = query
+
         attempt {
-            return try await self.moviesService.searchMovies(query: query)
+            return try await self.moviesService.searchMovies(query: query, page: self.currentPage)
         }.then {
-            movies in
-            self.movies = movies
+            response in
+            self.totalPages = response.totalPages
+            self.movies.append(contentsOf: response.results)
         }.catch {
             error in
             self.dataError(error)
@@ -53,7 +60,17 @@ class MoviesListViewModel: NSObject {
     
     // MARK: - Presentation
     func searchMovies(query: String) {
+        
+        // New search -> Reset movies and page
+        currentPage = 1
+        movies = []
+
         fetchData(query: query)
+    }
+    
+    func getNextPage() {
+        currentPage += 1
+        fetchData(query: lastQuery)
     }
 
     var isFetchingData: Bool {

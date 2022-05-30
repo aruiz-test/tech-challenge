@@ -13,6 +13,7 @@ class MoviesListViewController: UITableViewController {
     private let reuseIdentifierMovie = "MovieCellReuseIdentifier"
     private var viewModel: MoviesListViewModel = MoviesListViewModel()
 
+    private var lastNumberOfRows: Int = 0
 
     // MARK: - UIViewController + lifecycle
     override func viewDidLoad() {
@@ -45,8 +46,45 @@ class MoviesListViewController: UITableViewController {
         self.navigationItem.searchController?.searchBar.becomeFirstResponder()
     }
     
-    private func configureView() {
-        self.tableView.reloadSections(IndexSet(integer:0), with: .automatic)
+    private func configureView(isNewSearch: Bool) {
+        
+        // New search: Delete old table view rows
+        if isNewSearch {
+            let indexPathsToDelete = (0 ..< lastNumberOfRows).map {
+                IndexPath(row: $0, section: 0)
+            }
+            if indexPathsToDelete.isNotEmpty {
+                tableView.deleteRows(at: indexPathsToDelete, with: .automatic)
+            }
+            lastNumberOfRows = 0
+            setLoadingFooter()
+        }
+        
+        // New page of old search: Insert new table view rows
+        else {
+            let indexPathsToInsert = (lastNumberOfRows ..< viewModel.numberOfMovies).map {
+                IndexPath(row: $0, section: 0)
+            }
+            if indexPathsToInsert.isNotEmpty {
+                self.tableView.insertRows(at: indexPathsToInsert, with: .automatic)
+                setLoadingFooter()
+            } else {
+                setNoMoreResultsFooter()
+            }
+            lastNumberOfRows = viewModel.numberOfMovies
+        }
+    }
+    
+    private func setLoadingFooter() {
+        let activityIndicator = UIActivityIndicatorView(style: .medium); activityIndicator.startAnimating()
+        tableView.tableFooterView = activityIndicator
+    }
+    
+    private func setNoMoreResultsFooter() {
+        let tableViewFooter = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
+        tableViewFooter.text = "  No more results 🎬"
+        tableViewFooter.textAlignment = .center
+        tableView.tableFooterView = tableViewFooter
     }
     
     private func showError(_ error: Error) {
@@ -66,7 +104,7 @@ extension MoviesListViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // Return at least one row to show the loading message
-        return viewModel.isFetchingData ? 1 : viewModel.numberOfMovies
+        return viewModel.numberOfMovies
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -74,6 +112,7 @@ extension MoviesListViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         // Dequeue reusable cell and reset everything
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifierMovie, for: indexPath)
         cell.textLabel?.text        = nil
@@ -81,33 +120,27 @@ extension MoviesListViewController {
         cell.imageView?.image       = nil
         cell.accessoryType          = .none
 
-        // Show a loading message if data isn't ready yet. Otherwise, fill the cell with viewModel's data
-        if viewModel.isFetchingData {
-            let activityIndicator = UIActivityIndicatorView(style: .medium)
-            activityIndicator.startAnimating()
-            cell.accessoryView      = activityIndicator
-            cell.textLabel?.text    = "Searching movies..."
-        } else {
-            cell.textLabel?.text = viewModel.movieTitle(for: indexPath)
-            cell.detailTextLabel?.text = viewModel.movieYearFormatted(for: indexPath)
-            cell.imageView?.image = UIImage(named: "movie_default_icon")
-            viewModel.downloadMoviePosterImage(for: indexPath) {
-                image in
-                // Update UI on main thread
-                DispatchQueue.main.async {
-                    //guard let imageView = cell.imageView else { return }
-                    UIView.transition(
-                        with: cell.imageView!,
-                        duration: 0.35,
-                        options: .transitionCrossDissolve,
-                        animations: { cell.imageView!.image = image }
-                    )
-                }
+        cell.textLabel?.text = viewModel.movieTitle(for: indexPath)
+        cell.detailTextLabel?.text = viewModel.movieYearFormatted(for: indexPath)
+        cell.imageView?.image = UIImage(named: "movie_default_icon")
+        viewModel.downloadMoviePosterImage(for: indexPath) {
+            image in
+            // Update UI on main thread
+            DispatchQueue.main.async {
+                UIView.transition(
+                    with: cell.imageView!,
+                    duration: 0.35,
+                    options: .transitionCrossDissolve,
+                    animations: { cell.imageView!.image = image }
+                )
             }
         }
         
-        // TODO: Handle no-results case
-        
+        // If this is the last cell, request next page
+        if indexPath.row + 1 == viewModel.numberOfMovies {
+            viewModel.getNextPage()
+        }
+                        
         return cell
     }
     
@@ -121,10 +154,17 @@ extension MoviesListViewController {
 class MoviesListTableViewCell : UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+        imageView?.contentMode = .scaleAspectFill
+        imageView?.clipsToBounds = true
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.imageView?.frame = CGRect(x: 0, y: 0, width: 80, height: 100)
     }
 }
 
@@ -134,7 +174,7 @@ extension MoviesListViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let searchText = searchBar.text, searchText.isNotEmpty else { return }
+        // Start a new search when the search button is clicked
         viewModel.searchMovies(query: searchText)
-        configureView()
     }
 }

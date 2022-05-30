@@ -28,7 +28,7 @@ class MoviesService {
         private var baseURL: String { "https://api.themoviedb.org/3/" }
 
         // API methods
-        case searchMovie(String)
+        case searchMovie(String, Int)
         
         
         // Create the URL from the API method
@@ -37,9 +37,11 @@ class MoviesService {
             var queryItems: [URLQueryItem] = []
             
             switch self {
-            case .searchMovie(let query):
+            case .searchMovie(let query, let page):
                 endpoint = "search/movie"
                 queryItems.append(URLQueryItem(name: "query", value: query))
+                queryItems.append(URLQueryItem(name: "page", value: "\(page)"))
+                
             }
             
             // Construct the URL with baseURL, the API method and parameters (including the api_key)
@@ -88,10 +90,10 @@ class MoviesService {
     
         
     // Convenience funcs
-    func searchMovies(query: String) async throws -> [Movie] {
+    func searchMovies(query: String, page: Int) async throws -> MoviesResponse {
         // Perform the request
-        guard let data = try await executeRequest(endpoint: ApiEndpoint.searchMovie(query)) else {
-            return []
+        guard let data = try await executeRequest(endpoint: ApiEndpoint.searchMovie(query, page)) else {
+            return MoviesResponse(page: 0, results: [], totalPages: 0, totalResults: 0)
         }
 
         let decoder = JSONDecoder()
@@ -99,7 +101,7 @@ class MoviesService {
         
         // Decode the data as JSON and return the movies array
         let moviesResponse = try decoder.decode(MoviesResponse.self, from: data)
-        return moviesResponse.results
+        return moviesResponse
     }
     
     func getPosterImage(path: String, size: ImagesEndpoint.PosterSizes) async throws -> UIImage? {

@@ -23,7 +23,7 @@ class MockHttpService: HttpService {
         // Serialize mock data and return it as Data
         switch url.relativePath {
             
-        case MoviesService.ApiEndpoint.searchMovie("").url?.relativePath:
+        case MoviesService.ApiEndpoint.searchMovie("", 1).url?.relativePath:
             let data = try! jsonEncoder.encode(MockHttpService.testMoviesResponse)
             return data
             

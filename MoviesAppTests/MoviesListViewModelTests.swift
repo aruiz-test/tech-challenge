@@ -34,22 +34,23 @@ class MoviesListViewModelTests: XCTestCase {
         XCTAssertNil(moviesListViewModel.movieTitle(for: index))
         XCTAssertNil(moviesListViewModel.movieYearFormatted(for: index))
         
-        // Call searchMovies to start fetching data from the MoviesService
-        moviesListViewModel.searchMovies(query: "TEST")
-        
-        // Immediatelly after we call searchMovies, isFetchingData should be true
-        XCTAssertTrue(moviesListViewModel.isFetchingData)
-        
         let dataExpectation = XCTestExpectation(description: "Test dataChanged callback")
         
-        // The rest of presentation funcs and computed properties must be tested after MoviesService is done fetching data, which will invoke dataChanged callback
-        moviesListViewModel.dataChanged = {
+        // Presentation funcs and computed properties must be tested after MoviesService is done fetching data, which will invoke dataChanged callback
+        moviesListViewModel.dataChanged = { _ in
             XCTAssertGreaterThan(self.moviesListViewModel.numberOfMovies, 0)
             XCTAssertNotNil(self.moviesListViewModel.movieTitle(for: index))
             XCTAssertNotNil(self.moviesListViewModel.movieYearFormatted(for: index))
             dataExpectation.fulfill()
         }
         
+        // Call searchMovies to start fetching data from the MoviesService
+        moviesListViewModel.searchMovies(query: "TEST")
+        
+        // Immediatelly after we call searchMovies, isFetchingData should be true
+        XCTAssertTrue(moviesListViewModel.isFetchingData)
+        
+        // Wait for the dataChanged callback to fulfill the expectation
         wait(for: [dataExpectation], timeout: 1.0)
     }
     
@@ -59,7 +60,7 @@ class MoviesListViewModelTests: XCTestCase {
         let errorExpectation = XCTestExpectation(description: "Test dataError callback. Shouldn't be fulfilled")
         errorExpectation.isInverted = true // Inverted because we expect it NOT to be fulfilled
 
-        moviesListViewModel.dataChanged = {
+        moviesListViewModel.dataChanged = { _ in
             dataExpectation.fulfill()
         }
         moviesListViewModel.dataError = { _ in

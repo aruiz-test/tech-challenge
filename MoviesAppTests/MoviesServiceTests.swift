@@ -25,12 +25,12 @@ class MoviesServiceTests: XCTestCase {
     func testSearchMovies() async throws {
 
         attempt {
-            return try await self.moviesService.searchMovies(query: "TEST")
+            return try await self.moviesService.searchMovies(query: "TEST", page: 1)
         }.then {
-            movies in
-            XCTAssertGreaterThan(movies.count, 0)
+            response in
+            XCTAssertGreaterThan(response.results.count, 0)
 
-            let movie = movies.first
+            let movie = response.results.first
             let movieMock = MockHttpService.testMovies.first!
             
             // Compare first movie from request result with mock

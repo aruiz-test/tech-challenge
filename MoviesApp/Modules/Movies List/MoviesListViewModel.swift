@@ -7,10 +7,11 @@
 
 import Foundation
 import AsyncPlus
+import UIKit
 
 class MoviesListViewModel: NSObject {
     
-    private let apiService: MoviesService!
+    private let moviesService: MoviesService!
 
     // ViewControllers can bind to these closures get notified about data changes and errors
     var dataChanged = { () -> () in }
@@ -20,12 +21,15 @@ class MoviesListViewModel: NSObject {
 
     private var movies: [Movie] = [] {
         didSet {
-            self.dataChanged()
+            // Call on main thread so that UI updates are safe
+            DispatchQueue.main.async {
+                self.dataChanged()
+            }
         }
     }
     
-    init(apiService: MoviesService = MoviesService()) {
-        self.apiService = apiService
+    init(moviesService: MoviesService = MoviesService()) {
+        self.moviesService = moviesService
         super.init()
     }
     
@@ -34,7 +38,7 @@ class MoviesListViewModel: NSObject {
         self.fetchingData = true
         
         attempt {
-            return try await self.apiService.searchMovies(query: query)
+            return try await self.moviesService.searchMovies(query: query)
         }.then {
             movies in
             self.movies = movies
@@ -55,7 +59,6 @@ class MoviesListViewModel: NSObject {
     var isFetchingData: Bool {
         return self.fetchingData
     }
-
     
     var numberOfMovies: Int {
         return movies.count
@@ -81,6 +84,27 @@ class MoviesListViewModel: NSObject {
         }
         
         return "\(date.get(.year))"
+    }
+    
+    func downloadMoviePosterImageAsyncTo(for indexPath: IndexPath, completion: @escaping (UIImage?) -> ()) {
+        
+        guard movies.count > indexPath.row,
+              let posterPath = movies[indexPath.row].posterPath
+        else { return }
+        
+        // Start getPosterImage request
+        attempt {
+            return try await self.moviesService.getPosterImage(path: posterPath, size: .w185)
+        }.then {
+            image in
+            // Pass downloaded image to completion callback and let the caller handle UI work
+            completion(image)
+            
+        }.catch {
+            error in
+            print(error)
+        }
+        
     }
 
 }

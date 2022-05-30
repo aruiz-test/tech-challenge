@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import UIKit
+@testable import MoviesApp
 
 class MockHttpService: HttpService {
     
-    func executeRequest(url: URL) async throws -> Data {
+    func executeRequest(url: URL) async throws -> Data? {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-mm-dd"
@@ -21,12 +23,15 @@ class MockHttpService: HttpService {
         // Serialize mock data and return it as Data
         switch url.relativePath {
             
-        case MoviesService.API.searchMovie("").url.relativePath:
+        case MoviesService.ApiEndpoint.searchMovie("").url?.relativePath:
             let data = try! jsonEncoder.encode(MockHttpService.testMoviesResponse)
             return data
             
+        case MoviesService.ImagesEndpoint.getPosterImage("/test.jpg", .original).url?.relativePath:
+            return UIImage(named: "movie_default_icon")!.pngData()!
+            
         default:
-            return Data()
+            return nil
         }
 
     }
@@ -63,7 +68,7 @@ class FailingHttpService: HttpService {
     
     class MockError: Error {}
 
-    func executeRequest(url: URL) async throws -> Data {
+    func executeRequest(url: URL) async throws -> Data? {
         throw MockError()
     }
 }

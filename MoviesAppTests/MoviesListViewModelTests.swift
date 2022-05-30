@@ -7,6 +7,7 @@
 
 import AsyncPlus
 import XCTest
+@testable import MoviesApp
 
 class MoviesListViewModelTests: XCTestCase {
 
@@ -19,7 +20,7 @@ class MoviesListViewModelTests: XCTestCase {
         let moviesService = MoviesService(httpService: MockHttpService())
         
         // Create a MoviesListViewModel and inject the moviesService to it
-        moviesListViewModel = MoviesListViewModel(apiService: moviesService)
+        moviesListViewModel = MoviesListViewModel(moviesService: moviesService)
     }
 
     func testPresentation() throws {
@@ -39,13 +40,17 @@ class MoviesListViewModelTests: XCTestCase {
         // Immediatelly after we call searchMovies, isFetchingData should be true
         XCTAssertTrue(moviesListViewModel.isFetchingData)
         
+        let dataExpectation = XCTestExpectation(description: "Test dataChanged callback")
+        
         // The rest of presentation funcs and computed properties must be tested after MoviesService is done fetching data, which will invoke dataChanged callback
         moviesListViewModel.dataChanged = {
             XCTAssertGreaterThan(self.moviesListViewModel.numberOfMovies, 0)
             XCTAssertNotNil(self.moviesListViewModel.movieTitle(for: index))
             XCTAssertNotNil(self.moviesListViewModel.movieYearFormatted(for: index))
+            dataExpectation.fulfill()
         }
-
+        
+        wait(for: [dataExpectation], timeout: 1.0)
     }
     
     func testDataChangedCallback() throws {
@@ -82,7 +87,7 @@ class MoviesListViewModelTests: XCTestCase {
         let failingExpectation = XCTestExpectation(description: "Test dataError callback. This should be fulfilled")
 
         let failingService = MoviesService(httpService: FailingHttpService())
-        let failingViewModel = MoviesListViewModel(apiService: failingService)
+        let failingViewModel = MoviesListViewModel(moviesService: failingService)
         failingViewModel.dataError = { error in
             XCTAssertNotNil(error as? FailingHttpService.MockError)
             failingExpectation.fulfill() // This should be called

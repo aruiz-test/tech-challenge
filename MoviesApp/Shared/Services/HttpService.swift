@@ -8,12 +8,12 @@
 import Foundation
 
 protocol HttpService {
-    func executeRequest(url: URL) async throws -> Data
+    func executeRequest(url: URL) async throws -> Data?
 }
 
 // Default implementation to execute http requests
 class DefaultHttpService: HttpService {
-    func executeRequest(url: URL) async throws -> Data {
+    func executeRequest(url: URL) async throws -> Data? {
         let (data, _) = try await URLSession.shared.data(from: url)
         return data
     }
@@ -28,7 +28,7 @@ class SlowConnectionHttpService: HttpService {
         self.delayNanoseconds = delaySeconds * 1_000_000_000
     }
     
-    func executeRequest(url: URL) async throws -> Data {
+    func executeRequest(url: URL) async throws -> Data? {
         try? await Task.sleep(nanoseconds: delayNanoseconds)
         let (data, _) = try await URLSession.shared.data(from: url)
         return data

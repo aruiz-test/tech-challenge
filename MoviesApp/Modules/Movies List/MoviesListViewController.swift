@@ -46,10 +46,7 @@ class MoviesListViewController: UITableViewController {
     }
     
     private func configureView() {
-        // Ensure UI updates always happen on the main thread
-        DispatchQueue.main.async {
-            self.tableView.reloadSections(IndexSet(integer:0), with: .automatic)
-        }
+        self.tableView.reloadSections(IndexSet(integer:0), with: .automatic)
     }
     
     private func showError(_ error: Error) {
@@ -94,7 +91,19 @@ extension MoviesListViewController {
             cell.textLabel?.text = viewModel.movieTitle(for: indexPath)
             cell.detailTextLabel?.text = viewModel.movieYearFormatted(for: indexPath)
             cell.imageView?.image = UIImage(named: "movie_default_icon")
-            // TODO: Start actual image async request here. Or maybe create a viewModel method named configureCell that will do everything
+            viewModel.downloadMoviePosterImageAsyncTo(for: indexPath) {
+                image in
+                // Update UI on main thread
+                DispatchQueue.main.async {
+                    //guard let imageView = cell.imageView else { return }
+                    UIView.transition(
+                        with: cell.imageView!,
+                        duration: 0.35,
+                        options: .transitionCrossDissolve,
+                        animations: { cell.imageView!.image = image }
+                    )
+                }
+            }
         }
         
         return cell

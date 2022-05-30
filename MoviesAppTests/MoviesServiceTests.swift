@@ -21,7 +21,8 @@ class MoviesServiceTests: XCTestCase {
         moviesService = MoviesService(httpService: MockHttpService())
     }
 
-    func testSearchMovies() throws {
+    // Test ApiEndpoint
+    func testSearchMovies() async throws {
 
         attempt {
             return try await self.moviesService.searchMovies(query: "TEST")
@@ -41,8 +42,17 @@ class MoviesServiceTests: XCTestCase {
         }.catch { _ in }
         
     }
-
+    
+    // Test ImagesEndpoint
+    func testGetPosterImage() async throws {
+        
+        attempt {
+            return try await self.moviesService.getPosterImage(path: "/test.jpg", size: .original)
+        }.then {
+            image in
+            XCTAssertNotNil(image)
+        }.catch { _ in }
+        
+    }
+    
 }
-
-
-

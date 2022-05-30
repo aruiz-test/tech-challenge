@@ -15,19 +15,13 @@
 		8E24501F284293070058E1C6 /* MoviesAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E24501E284293070058E1C6 /* MoviesAppUITestsLaunchTests.swift */; };
 		8E24502C284296280058E1C6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E24502B284296280058E1C6 /* LaunchScreen.storyboard */; };
 		8E2450342842A4360058E1C6 /* MoviesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2450332842A4360058E1C6 /* MoviesService.swift */; };
-		8E2450352842A4360058E1C6 /* MoviesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2450332842A4360058E1C6 /* MoviesService.swift */; };
 		8E2450382842AB790058E1C6 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2450372842AB790058E1C6 /* Movie.swift */; };
-		8E2450392842AB790058E1C6 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2450372842AB790058E1C6 /* Movie.swift */; };
 		8E24503C284371AF0058E1C6 /* AsyncPlus in Frameworks */ = {isa = PBXBuildFile; productRef = 8E24503B284371AF0058E1C6 /* AsyncPlus */; };
 		8E24503F284371F50058E1C6 /* MoviesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E24503E284371F50058E1C6 /* MoviesListViewModel.swift */; };
-		8E245040284371F50058E1C6 /* MoviesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E24503E284371F50058E1C6 /* MoviesListViewModel.swift */; };
 		8E245042284376BA0058E1C6 /* HttpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E245041284376BA0058E1C6 /* HttpService.swift */; };
-		8E245043284376BA0058E1C6 /* HttpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E245041284376BA0058E1C6 /* HttpService.swift */; };
-		8E2450452843846D0058E1C6 /* MockHttpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2450442843846C0058E1C6 /* MockHttpService.swift */; };
 		8E2450462843846D0058E1C6 /* MockHttpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2450442843846C0058E1C6 /* MockHttpService.swift */; };
 		8E245048284388170058E1C6 /* MoviesListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E245047284388170058E1C6 /* MoviesListViewModelTests.swift */; };
 		8E24504A284441D80058E1C6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E245049284441D80058E1C6 /* Extensions.swift */; };
-		8E24504B284441D80058E1C6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E245049284441D80058E1C6 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -341,7 +335,6 @@
 				8E2450382842AB790058E1C6 /* Movie.swift in Sources */,
 				8E2450342842A4360058E1C6 /* MoviesService.swift in Sources */,
 				8E245042284376BA0058E1C6 /* HttpService.swift in Sources */,
-				8E2450452843846D0058E1C6 /* MockHttpService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,14 +342,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E2450352842A4360058E1C6 /* MoviesService.swift in Sources */,
 				8E245013284293070058E1C6 /* MoviesServiceTests.swift in Sources */,
-				8E2450392842AB790058E1C6 /* Movie.swift in Sources */,
-				8E24504B284441D80058E1C6 /* Extensions.swift in Sources */,
-				8E245040284371F50058E1C6 /* MoviesListViewModel.swift in Sources */,
 				8E245048284388170058E1C6 /* MoviesListViewModelTests.swift in Sources */,
 				8E2450462843846D0058E1C6 /* MockHttpService.swift in Sources */,
-				8E245043284376BA0058E1C6 /* HttpService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

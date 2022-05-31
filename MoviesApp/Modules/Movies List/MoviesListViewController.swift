@@ -120,20 +120,19 @@ extension MoviesListViewController {
         cell.imageView?.image       = nil
         cell.accessoryType          = .none
 
+        // Fill cell properties with data from viewModel
         cell.textLabel?.text = viewModel.movieTitle(for: indexPath)
         cell.detailTextLabel?.text = viewModel.movieYearFormatted(for: indexPath)
         cell.imageView?.image = UIImage(named: "movie_default_icon")
-        viewModel.downloadMoviePosterImage(for: indexPath) {
-            image in
-            // Update UI on main thread
-            DispatchQueue.main.async {
-                UIView.transition(
-                    with: cell.imageView!,
-                    duration: 0.35,
-                    options: .transitionCrossDissolve,
-                    animations: { cell.imageView!.image = image }
-                )
-            }
+        
+        // Start async download of the poster image
+        viewModel.downloadMoviePosterImage(for: indexPath) { image in
+            UIView.transition(
+                with: cell.imageView!,
+                duration: 0.35,
+                options: .transitionCrossDissolve,
+                animations: { cell.imageView!.image = image }
+            )
         }
         
         // If this is the last cell, request next page
@@ -150,7 +149,7 @@ extension MoviesListViewController {
 }
 
 
-// MARK: - Cell subclass to be able to use the .subtitle style
+// Cell subclass to be able to use the .subtitle style and other customisations
 class MoviesListTableViewCell : UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)

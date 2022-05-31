@@ -13,7 +13,7 @@ class MoviesListViewModel: NSObject {
     
     private let moviesService: MoviesService!
 
-    // ViewControllers can bind to these closures get notified about data changes and errors
+    // ViewControllers can bind to these closures to get notified about data changes and errors
     var dataChanged = { (isNewSearch: Bool) -> () in }
     var dataError   = { (error: Error) -> () in }
     
@@ -48,10 +48,11 @@ class MoviesListViewModel: NSObject {
         }.then {
             response in
             self.totalPages = response.totalPages
-            self.movies.append(contentsOf: response.results)
+            self.movies.append(contentsOf: response.results) // This will trigger movies.didSet and dataChanged
         }.catch {
             error in
-            self.dataError(error)
+            // Call on main thread so that UI updates are safe
+            DispatchQueue.main.async { self.dataError(error) }
         }.finally {
             self.fetchingData = false
         }
@@ -59,11 +60,11 @@ class MoviesListViewModel: NSObject {
     
     
     // MARK: - Presentation
+    
     func searchMovies(query: String) {
-        
         // New search -> Reset movies and page
         currentPage = 1
-        movies = []
+        movies = [] // This will trigger movies.didSet and dataChanged
 
         fetchData(query: query)
     }
@@ -96,9 +97,7 @@ class MoviesListViewModel: NSObject {
               let dateString = movies[indexPath.row].releaseDate,
               dateString.isNotEmpty,
               let date = formatter.date(from: dateString)
-        else {
-            return nil
-        }
+        else { return nil }
         
         return "\(date.get(.year))"
     }
@@ -114,14 +113,12 @@ class MoviesListViewModel: NSObject {
             return try await self.moviesService.getPosterImage(path: posterPath, size: .w185)
         }.then {
             image in
-            // Pass downloaded image to completion callback and let the caller handle UI work
-            completion(image)
-            
+            // Pass downloaded image to completion callback and let the caller handle UI work. Call on main thread so that UI updates are safe
+            DispatchQueue.main.async { completion(image) }
         }.catch {
             error in
             print(error)
         }
-        
     }
 
 }

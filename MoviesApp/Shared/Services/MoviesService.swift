@@ -105,9 +105,7 @@ class MoviesService {
     }
     
     func getPosterImage(path: String, size: ImagesEndpoint.PosterSizes) async throws -> UIImage? {
-        
-        // TODO: Add cache functionality
-        
+                
         // Perform the request
         guard let data = try await executeRequest(endpoint: ImagesEndpoint.getPosterImage(path, size)) else {
             return nil

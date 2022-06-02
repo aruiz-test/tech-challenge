@@ -18,7 +18,7 @@ class MoviesService {
     let httpService: HttpService!
     
     // MARK: Change to SlowConnectionHttpService here to test how the app would work on slow mobile connections
-    init(httpService: HttpService = SlowConnectionHttpService()) {
+    init(httpService: HttpService = DefaultHttpService()) {
         self.httpService = httpService
     }
     
